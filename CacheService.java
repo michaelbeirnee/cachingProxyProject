@@ -81,5 +81,27 @@ public class CacheService{
 
         //store body bytes
         private final byte[] body;
+
+        //create a cached response object
+        public CachedProxyResposne(int statusCode, HttpHeaders headers, byte[] body){
+            this.statusCode = statusCode; 
+            this.headers = headers; 
+            this.body = body;
+        }
+
+        //return status code 
+        public int getStatusCode(){
+            return statusCode; 
+        }
+
+        //return headers
+        public HttpHeaders getHeaders(){
+            return headers; 
+        }
+
+        //return byte
+        public byte[] getBody(){
+            return body; 
+        }
     }
 }
