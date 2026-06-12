@@ -129,7 +129,44 @@ public class ProxyController{
 
             return ResponseEntity.status(originResponse.getStatusCode()).headers(responsHeaders).body(cachedResponse.getBody());
         }catch (Exception error){
-            return ResponseEntity.interalServerError().body
+            return ResponseEntity.interalServerError().body(("{\"error\":\"Proxy error\",\"details\":\"") + error.getMessage() + "\}").getBytes(); 
+        }
+
+        //read body bytes from the incoming request 
+        private byte[] readBody(HttpServletRequest request) throws Exception{
+            //open the request input stream 
+            InputStream inputStream = request.getInputStream(); 
+
+            //read all bytes from the body
+            return inputStream.readAllBytes(); 
+        }
+
+        //copy request headers from client to origin
+        private HttpHeaders copyRequestHeaders(HttpServletRequest request){
+           //create headers object
+            HttpHeaders headers = new HttpHeaders(); 
+
+            //get all header names
+            var headerNames = request.getHeaderNames(); 
+
+            while(headerNames.hasMoreElements()){
+                //get one header name 
+                String headerName = headerName.nextElement(); 
+
+                //do not forward host because origin has its own host
+                if(headerName.equalsIgnoreCase("host")){
+                    continue; 
+                }
+
+                //get all values for this header
+                var headerValue = request.getHeaders(headerName);
+
+                //loop through values 
+                while(headerValues.hasMoreElements()){
+                    headers.add(headerName, headerValue.nextElement()); 
+                }
+            }
+            return headers; 
         }
     }
 
