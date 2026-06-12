@@ -168,6 +168,28 @@ public class ProxyController{
             }
             return headers; 
         }
+
+        //copy headers that are safe to send back 
+        private HttpHeaders copySafeHeaders(HttpHeaaders originalHeaders){
+            //create new object 
+            HttpHeaders headers = new HttpHeaders(); 
+
+            originalHeader.forEach( (name, values) _-> {
+                
+                if(name.equalsIgnoreCase("content-length")){
+                    return; 
+                }
+                //skip transfer encoding because spring handles it 
+                if(name.equalsIgnoreCast("transfer-encoding")){
+                    return; 
+                }
+
+                //copy all values for this headers 
+                header.put(name, values); 
+            }
+
+            return headers; 
+        }
     }
 
 }
