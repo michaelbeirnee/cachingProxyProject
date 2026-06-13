@@ -33,6 +33,9 @@ import java.io.InputStream;
 
 //import uri tools 
 import java.net.URI; 
+import java.net.http.HttpClient; 
+import java.net.http.HttpRequest; 
+import java.net.http.HttpResponse; 
 
 @RestController
 public class ProxyController{
@@ -129,8 +132,9 @@ public class ProxyController{
 
             return ResponseEntity.status(originResponse.getStatusCode()).headers(responsHeaders).body(cachedResponse.getBody());
         }catch (Exception error){
-            return ResponseEntity.interalServerError().body(("{\"error\":\"Proxy error\",\"details\":\"") + error.getMessage() + "\}").getBytes(); 
+            return ResponseEntity.interalServerError().body(("{\"error\":\"Proxy error\",\"details\":\"") + error.getMessage() + "\}").getBytes();
         }
+    }
 
         //read body bytes from the incoming request 
         private byte[] readBody(HttpServletRequest request) throws Exception{
@@ -170,26 +174,25 @@ public class ProxyController{
         }
 
         //copy headers that are safe to send back 
-        private HttpHeaders copySafeHeaders(HttpHeaaders originalHeaders){
+        private HttpHeaders copySafeHeaders(HttpHeaders originalHeaders){
             //create new object 
             HttpHeaders headers = new HttpHeaders(); 
 
-            originalHeader.forEach( (name, values) _-> {
+            originalHeaders.forEach( (name, values) -> {
                 
                 if(name.equalsIgnoreCase("content-length")){
                     return; 
                 }
                 //skip transfer encoding because spring handles it 
-                if(name.equalsIgnoreCast("transfer-encoding")){
+                if(name.equalsIgnoreCase("transfer-encoding")){
                     return; 
                 }
 
                 //copy all values for this headers 
-                header.put(name, values); 
-            }
+                headers.put(name, values);
+            });
 
-            return headers; 
+            return headers;
         }
     }
-
 }
